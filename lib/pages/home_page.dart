@@ -24,69 +24,84 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Colors.black),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.1, 0.5, 0.7, 0.9],
+          colors: [
+            Colors.green[800],
+            Colors.green[700],
+            Colors.green[600],
+            Colors.green[400],
+          ],
         ),
-        backgroundColor: Color.fromRGBO(242, 127, 34, 1),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _reset,
-            color: Colors.black,
-          ),
-        ],
       ),
-      body: Center(
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final width = constraints.maxWidth * cardsExtent;
-            final height = constraints.maxHeight * cardsExtent;
-            final hintFontSize = constraints.maxHeight * 0.025;
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.title,
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Color.fromRGBO(242, 127, 34, 1),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: _reset,
+              color: Colors.black,
+            ),
+          ],
+        ),
+        body: Center(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final width = constraints.maxWidth * cardsExtent;
+              final height = constraints.maxHeight * cardsExtent;
+              final hintFontSize = constraints.maxHeight * 0.025;
 
-            return Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-              ),
-              child: Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: _drawCard,
-                    child: CardDisplay(
-                      card: cardBack,
-                      width: width,
-                      height: height,
-                    ),
-                  ),
-                  if (_currentCard != null)
+              return Container(
+                width: width,
+                height: height,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                child: Stack(
+                  children: <Widget>[
                     GestureDetector(
-                      onTap: _discardCard,
-                      child: Dismissible(
-                        key: ObjectKey(_currentCard),
-                        onDismissed: _discardCard,
-                        child: CardDisplay(
-                          card: _currentCard,
-                          width: width,
-                          height: height,
+                      onTap: _drawCard,
+                      child: CardDisplay(
+                        card: cardBack,
+                        width: width,
+                        height: height,
+                      ),
+                    ),
+                    if (_currentCard != null)
+                      GestureDetector(
+                        onTap: _discardCard,
+                        child: Dismissible(
+                          key: ObjectKey(_currentCard),
+                          onDismissed: _discardCard,
+                          child: CardDisplay(
+                            card: _currentCard,
+                            width: width,
+                            height: height,
+                          ),
                         ),
                       ),
-                    ),
-                  if (_showHint)
-                    Align(
-                      alignment: Alignment(0, 0.5),
-                      child: Text(
-                        "Touch to draw a card",
-                        style: TextStyle(fontSize: hintFontSize),
+                    if (_showHint)
+                      Align(
+                        alignment: Alignment(0, 0.5),
+                        child: Text(
+                          "Touch to draw a card",
+                          style: TextStyle(fontSize: hintFontSize),
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

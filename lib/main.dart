@@ -11,7 +11,7 @@ class FunnyBunny extends StatelessWidget {
       title: 'Funny Bunny',
       theme: ThemeData(
         primarySwatch: Colors.green,
-        scaffoldBackgroundColor: const Color.fromRGBO(28, 133, 30, 1),
+        scaffoldBackgroundColor: Colors.transparent,
       ),
       home: HomePage(title: 'Funny Bunny'),
     );
