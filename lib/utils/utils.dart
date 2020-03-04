@@ -1,0 +1,1 @@
+String enumToString(enumValue) => enumValue.toString().split(".").last;
