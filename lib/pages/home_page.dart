@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   final deck = Deck<FbCardId>.fromQtyTable(fbDeckData);
 
   Card _currentCard;
-  bool _showHint = true;
+  bool _showDrawHint = true;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,18 @@ class _HomePageState extends State<HomePage> {
             widget.title,
             style: TextStyle(color: Colors.black),
           ),
-          backgroundColor: Color.fromRGBO(242, 127, 34, 1),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromRGBO(242, 127, 34, 1),
+                  Colors.orange[400],
+                ],
+              ),
+            ),
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.refresh),
@@ -58,18 +69,39 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context, BoxConstraints constraints) {
               final width = constraints.maxWidth * cardsExtent;
               final height = constraints.maxHeight * cardsExtent;
-              final hintFontSize = constraints.maxHeight * 0.025;
 
-              return Container(
+              final hintStyle = TextStyle(
+                fontSize: constraints.maxHeight * 0.025,
+                fontFamily: "ComingSoon",
+              );
+
+              return SizedBox(
                 width: width,
                 height: height,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
                 child: Stack(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: _drawCard,
+                      onTap: () {
+                        if (_showDrawHint) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Icon(Icons.chevron_left),
+                                Text(
+                                  " Swipe or touch card to discard",
+                                  style: hintStyle,
+                                ),
+                              ],
+                            ),
+                          ));
+                        }
+
+                        _showDrawHint = false;
+                        setState(() {
+                          _currentCard = deck.draw();
+                        });
+                      },
                       child: CardDisplay(
                         card: cardBack,
                         width: width,
@@ -89,13 +121,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                    if (_showHint)
+                    if (_showDrawHint)
                       Align(
-                        alignment: Alignment(0, 0.5),
-                        child: Text(
-                          "Touch to draw a card",
-                          style: TextStyle(fontSize: hintFontSize),
-                        ),
+                        alignment: Alignment(0, 0.65),
+                        child: Text("Touch to draw a card", style: hintStyle),
                       ),
                   ],
                 ),
@@ -105,14 +134,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void _drawCard() {
-    _showHint = false;
-
-    setState(() {
-      _currentCard = deck.draw();
-    });
   }
 
   void _discardCard([_]) {
@@ -126,7 +147,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       deck.shuffle();
       _currentCard = null;
-      _showHint = true;
+      _showDrawHint = true;
     });
   }
 }
